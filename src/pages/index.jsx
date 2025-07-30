@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import Navbar from '../components/navbar.jsx';
-import Carousel from '../components/Carousel.jsx';
+import Carousel from '../components/carousel.jsx';
 import Footer from '../components/footer.jsx';
 
 function LandingPage() {
