@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import LandingPage from './pages/Index';
+import LandingPage from './pages/index';
 import AboutUs from './pages/AboutUs';
 import ContactUs from './pages/ContactUs';
 import Shop from './pages/Shop';
@@ -43,5 +43,4 @@ function App() {
     </Router>
   );
 }
-
-export default App;
+export default App; 
