@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import Navbar from '../components/navbar';
-import Footer from '../components/Footer';
+import Footer from '../components/footer';
 
 
 function Shop() {
