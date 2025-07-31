@@ -18,7 +18,7 @@ function LandingPage() {
     )
   );
   const [showLoginPopup, setShowLoginPopup] = useState(false);
-  const [showSellerPopup, setShowSellerPopup] = useState(false); // New state for seller popup
+  const [showSellerPopup, setShowSellerPopup] = useState(false); 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const cartRef = useRef(null);
   const navigate = useNavigate();

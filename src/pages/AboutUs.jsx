@@ -1,49 +1,20 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import Navbar from '../components/navbar';
 import one from '../assets/landing-images/one.png';
 import two from '../assets/landing-images/two.png';
 import three from '../assets/landing-images/three.png';
+import video from '../assets/videos/brand-video.mp4';
 
 function AboutUs() {
-  // Animation variants for sections
-  const sectionVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
-  };
-
-  // 3D card animation variants
-  const cardVariants = {
-    hidden: { opacity: 0, scale: 0.8, rotateY: 30 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      rotateY: 0,
-      transition: { duration: 0.6, ease: 'easeOut' },
-    },
-    hover: {
-      scale: 1.05,
-      rotateY: 10,
-      boxShadow: '8px 8px 24px rgba(255,255,255,0.2)', // Adjusted for dark mode
-      transition: { duration: 0.3 },
-    },
-  };
-
-  // Video animation variants
-  const videoVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 1, ease: 'easeOut' } },
-  };
-
   return (
-    <motion.div className="relative min-h-screen bg-black text-white">
+    <div className="relative min-h-screen bg-black text-white">
       {/* Navbar - Rendered immediately without animation */}
       <Navbar />
 
       {/* Main Content */}
       <main className="flex flex-col items-center pt-20 pb-10 px-4 sm:px-6 min-h-screen">
         {/* Header */}
-        <motion.h1
+        <h1
           className="text-3xl sm:text-4xl font-extrabold mb-12 text-center tracking-wide"
           style={{
             fontFamily: "'Brush Script MT', cursive",
@@ -51,21 +22,12 @@ function AboutUs() {
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
         >
           About Elegance Essence
-        </motion.h1>
+        </h1>
 
         {/* Brand Description */}
-        <motion.section
-          className="max-w-3xl text-center mb-16"
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.2 }}
-        >
+        <section className="max-w-3xl text-center mb-16">
           <h2
             className="text-xl sm:text-2xl font-semibold mb-4"
             style={{ fontFamily: "'Arial', sans-serif" }}
@@ -78,16 +40,10 @@ function AboutUs() {
           >
             Elegance Essence is your premier online destination for branded costumes, where tradition meets modernity. We curate a stunning collection of Indian, Indo-Western, and Western wear, designed to celebrate your unique style. Our passion is to empower you with outfits that exude sophistication, crafted with the finest materials and inspired by the latest fashion trends.
           </p>
-        </motion.section>
+        </section>
 
-        {/* Collection Showcase with 3D Cards */}
-        <motion.section
-          className="max-w-5xl w-full mb-16"
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.4 }}
-        >
+        {/* Collection Showcase */}
+        <section className="max-w-5xl w-full mb-16">
           <h2
             className="text-xl sm:text-2xl font-semibold mb-8 text-center"
             style={{ fontFamily: "'Arial', sans-serif" }}
@@ -111,19 +67,10 @@ function AboutUs() {
                 image: three,
                 description: 'Chic dresses and trendy outfits for every occasion.',
               },
-            ].map((item, index) => (
-              <motion.div
+            ].map((item) => (
+              <div
                 key={item.title}
                 className="relative bg-gray-900 rounded-lg overflow-hidden shadow-lg"
-                style={{
-                  transformStyle: 'preserve-3d',
-                  perspective: '800px',
-                }}
-                variants={cardVariants}
-                initial="hidden"
-                animate="visible"
-                whileHover="hover"
-                transition={{ delay: 0.4 + index * 0.2 }}
               >
                 <img
                   src={item.image}
@@ -144,19 +91,13 @@ function AboutUs() {
                     {item.description}
                   </p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.section>
+        </section>
 
         {/* Promotional Video */}
-        <motion.section
-          className="max-w-4xl w-full mb-16"
-          variants={videoVariants}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.6 }}
-        >
+        <section className="max-w-4xl w-full mb-16">
           <h2
             className="text-xl sm:text-2xl font-semibold mb-6 text-center"
             style={{ fontFamily: "'Arial', sans-serif" }}
@@ -171,20 +112,14 @@ function AboutUs() {
               muted
               playsInline
             >
-              <source src="../assets/videos/brand-video.mp4" type="video/mp4" />
+              <source src={video} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>
-        </motion.section>
+        </section>
 
         {/* Call to Action */}
-        <motion.section
-          className="max-w-3xl text-center"
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.8 }}
-        >
+        <section className="max-w-3xl text-center">
           <h2
             className="text-xl sm:text-2xl font-semibold mb-4"
             style={{ fontFamily: "'Arial', sans-serif" }}
@@ -197,18 +132,16 @@ function AboutUs() {
           >
             Dive into our exclusive collections and find the perfect outfit that defines your elegance. At Elegance Essence, every piece tells a story of style and craftsmanship.
           </p>
-          <motion.a
+          <a
             href="/shop"
             className="inline-block px-6 py-2 rounded-full font-medium transition duration-300 bg-white text-black hover:bg-gray-200"
             style={{ fontFamily: "'Arial', sans-serif" }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
           >
             Shop Now
-          </motion.a>
-        </motion.section>
+          </a>
+        </section>
       </main>
-    </motion.div>
+    </div>
   );
 }
 

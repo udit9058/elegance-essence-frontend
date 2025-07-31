@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import Navbar from '../components/navbar';
+import Footer from '../components/Footer';
+
 
 function Shop() {
   const [products, setProducts] = useState([]);
@@ -140,8 +142,7 @@ function Shop() {
       style={{
         backgroundColor: entranceDone ? '#ffffff' : '#000000',
         color: entranceDone ? '#000000' : '#ffffff',
-      }}
-    >
+      }}>
       <Navbar entranceDone={entranceDone} />
       <div className="fixed top-5 right-5 z-50">
         <div
@@ -278,6 +279,7 @@ function Shop() {
                   className="w-full h-auto max-h-[300px] object-contain"
                   onError={(e) => {
                     console.error(`Failed to load image for ${product.name}: ${product.image}`);
+                    console.log(`Attempted URL: http://localhost:8000/storage/${product.image}`);
                     e.target.src = 'https://via.placeholder.com/300';
                   }}
                 />
@@ -313,7 +315,9 @@ function Shop() {
           )}
         </div>
       </main>
+      <Footer></Footer>
     </motion.div>
+    
   );
 }
 
