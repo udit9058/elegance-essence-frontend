@@ -502,9 +502,8 @@ const Carousel = ({
                 return (
                   <motion.div
                     key={`grid-${idx}`}
-                    className={`relative w-[60px] sm:w-[70px] h-[90px] sm:h-[105px] rounded-lg bg-white shadow-md overflow-hidden cursor-pointer flex-shrink-0 ${
-                      idx === centerIndex ? 'ring-2 ring-black ring-offset-2' : ''
-                    }`}
+                    className={`relative w-[60px] sm:w-[70px] h-[90px] sm:h-[105px] rounded-lg bg-white shadow-md overflow-hidden cursor-pointer flex-shrink-0 ${idx === centerIndex ? 'ring-2 ring-black ring-offset-2' : ''
+                      }`}
                     onClick={() => {
                       setShowOverlay(!showOverlay);
                       if (!isLoggedIn) {
@@ -527,9 +526,8 @@ const Carousel = ({
                       {card.name}
                     </div>
                     <div
-                      className={`absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-200 flex flex-col justify-end items-center pb-1 sm:pb-2 ${
-                        showOverlay ? 'opacity-100' : 'opacity-0'
-                      }`}
+                      className={`absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-200 flex flex-col justify-end items-center pb-1 sm:pb-2 ${showOverlay ? 'opacity-100' : 'opacity-0'
+                        }`}
                     >
                       <span className="text-white text-[10px] sm:text-xs font-bold">{card.price}</span>
                       <div className="mt-0.5 sm:mt-1 flex items-center">
@@ -774,7 +772,7 @@ const Carousel = ({
                       <motion.div
                         key={`grid-${idx}`}
                         className={`group w-[80px] h-[120px] rounded-lg bg-white overflow-hidden relative shadow-md cursor-pointer flex-shrink-0 ${idx === centerIndex ? 'ring-2 ring-black ring-offset-2' : ''}`}
-                         whileHover={{ scale: 1.05 }}
+                        whileHover={{ scale: 1.05 }}
                         onClick={() => {
                           if (!isLoggedIn) {
                             setShowLoginPopup(true);
@@ -796,40 +794,8 @@ const Carousel = ({
                           {card.name}
                         </div>
                         <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-end items-center pb-2">
-                          <span className="text-white text-xs font-bold">{card.price}</span>
                           <div className="mt-1">
-                            <label htmlFor={`quantity-${card.alt}`} className="mr-1 text-xs text-white">
-                              Qty:
-                            </label>
-                            <input
-                              id={`quantity-${card.alt}`}
-                              type="number"
-                              min="1"
-                              max="12"
-                              value={currentQuantity}
-                              onChange={(e) =>
-                                setQuantities((prev) => ({
-                                  ...prev,
-                                  [card.alt]: parseInt(e.target.value) || 1,
-                                }))
-                              }
-                              className="w-10 p-0.5 border rounded text-white text-xs"
-                            />
                           </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (!isLoggedIn) {
-                                setShowLoginPopup(true);
-                              } else {
-                                addToCart(card, e.currentTarget.closest('.group'));
-                              }
-                            }}
-                            className="bg-white text-black text-xs px-2 py-0.5 rounded-full hover:bg-gray-200 transition duration-200 mt-1"
-                            aria-label={`Add ${card.name} to cart`}
-                          >
-                            Add to Cart
-                          </button>
                         </div>
                       </motion.div>
                     );

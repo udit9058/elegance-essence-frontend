@@ -6,6 +6,7 @@ import api from '../api';
 import Navbar from '../components/navbar.jsx';
 import Carousel from '../components/carousel.jsx';
 import Footer from '../components/footer.jsx';
+import FeaturedProducts from '../components/FeaturedProducts.jsx';
 
 function LandingPage() {
   const [entranceDone, setEntranceDone] = useState(false);
@@ -111,8 +112,7 @@ function LandingPage() {
         style={{
           backgroundColor: entranceDone ? '#ffffff' : '#000000',
           color: entranceDone ? '#000000' : '#ffffff',
-        }}
-      >
+        }}>
         <div className="fixed top-4 right-4 z-50">
           <div
             ref={cartRef}
@@ -267,8 +267,7 @@ function LandingPage() {
           animate={{
             y: entranceDone ? -90 : 0,
             transition: { duration: 1.5, ease: 'easeInOut' },
-          }}
-        >
+          }}>
           <motion.h2
             className="text-3xl font-extrabold mb-8 z-10 relative tracking-wide text-gray-900 dark:text-black pt-[70px]"
             style={{
@@ -295,6 +294,8 @@ function LandingPage() {
             setShowLoginPopup={setShowLoginPopup}
             showEntranceAnimation={!entranceDone}
           />
+          {/* <FeaturedProducts /> */}
+
         </motion.main>
       </motion.div>
       <Footer setShowSellerPopup={setShowSellerPopup} isLoggedIn={isLoggedIn} />
