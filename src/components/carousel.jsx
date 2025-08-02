@@ -441,7 +441,7 @@ const Carousel = ({
                     className="absolute rounded-lg overflow-hidden bg-white shadow-md"
                     style={{
                       clipPath: props.clipPath || 'none',
-                      boxShadow: props.boxShadow,
+                      boxShadow: '6px 6px 20px rgba(0,0,0,0.1)',
                       transformStyle: 'preserve-3d',
                       cursor: props.cursor,
                     }}
@@ -482,35 +482,27 @@ const Carousel = ({
           )}
           {/* Card Grid */}
           <motion.div
-            className="mt-4 w-full max-w-md mx-auto overflow-x-auto perspective-[600px]"
+            className="ml-60 mt-4 w-full max-w-md mx-auto perspective-[600px] overflow-x-auto"
             initial={{ y: isMobile ? 50 : 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6 }}
           >
             <motion.div
-              className="flex gap-4 p-4 ml-40"
-              initial={{ x: 50 }}
+              className="flex gap-4 p-4 justify-center"
+              initial={{ x: 0 }}
               animate={{
                 x: isMobile ? -centerIndex * 80 : -centerIndex * 120,
                 transition: { type: 'spring', stiffness: 300, damping: 40 },
               }}
             >
               {cards.map((card, idx) => {
-                const currentQuantity = quantities[card.alt] || 1;
-                const [showOverlay, setShowOverlay] = useState(false);
-
+                const currentQuantity = quantities[card.alt];
                 return (
                   <motion.div
                     key={`grid-${idx}`}
-                    className={`relative w-[60px] sm:w-[70px] h-[90px] sm:h-[105px] rounded-lg bg-white shadow-md overflow-hidden cursor-pointer flex-shrink-0 ${idx === centerIndex ? 'ring-2 ring-black ring-offset-2' : ''
-                      }`}
+                    className={`w-[60px] sm:w-[70px] h-[90px] sm:h-[105px] rounded-lg bg-white overflow-hidden relative shadow-md cursor-pointer flex-shrink-0 ${idx === centerIndex ? 'ring-2 ring-black ring-offset-2' : ''}`}
                     onClick={() => {
-                      setShowOverlay(!showOverlay);
-                      if (!isLoggedIn) {
-                        setShowLoginPopup(true);
-                      } else {
-                        setCenterIndex(idx);
-                      }
+                      setCenterIndex(idx);
                     }}
                     role="button"
                     tabIndex={0}
@@ -524,42 +516,6 @@ const Carousel = ({
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-80 text-black text-[10px] sm:text-xs text-center py-0.5">
                       {card.name}
-                    </div>
-                    <div
-                      className={`absolute inset-0 bg-black bg-opacity-50 transition-opacity duration-200 flex flex-col justify-end items-center pb-1 sm:pb-2 ${showOverlay ? 'opacity-100' : 'opacity-0'
-                        }`}
-                    >
-                      <span className="text-white text-[10px] sm:text-xs font-bold">{card.price}</span>
-                      <div className="mt-0.5 sm:mt-1 flex items-center">
-                        <label htmlFor={`quantity-${card.alt}`} className="mr-0.5 text-[10px] sm:text-xs text-white">
-                          Qty:
-                        </label>
-                        <input
-                          id={`quantity-${card.alt}`}
-                          type="number"
-                          min="1"
-                          max="12"
-                          value={currentQuantity}
-                          onChange={(e) =>
-                            setQuantities((prev) => ({
-                              ...prev,
-                              [card.alt]: parseInt(e.target.value) || 1,
-                            }))
-                          }
-                          onClick={(e) => e.stopPropagation()}
-                          className="w-10 sm:w-12 p-0.5 border rounded text-black text-[10px] sm:text-xs"
-                        />
-                      </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToCart(card, e.currentTarget.closest('div'));
-                        }}
-                        className="bg-white text-black text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full hover:bg-gray-200 transition duration-200 mt-0.5 sm:mt-1"
-                        aria-label={`Add ${card.name} to cart`}
-                      >
-                        Add to Cart
-                      </button>
                     </div>
                   </motion.div>
                 );
@@ -592,7 +548,7 @@ const Carousel = ({
           </AnimatePresence>
         </div>
       ) : (
-        // Desktop View (Original)
+        // Desktop View
         <>
           {showEntranceAnimation ? (
             <>
@@ -714,7 +670,7 @@ const Carousel = ({
                       className="absolute rounded-2xl overflow-hidden bg-white shadow-lg"
                       style={{
                         clipPath: props.clipPath || 'none',
-                        boxShadow: props.boxShadow,
+                        boxShadow: '10px 10px 30px rgba(0,0,0,0.1)',
                         transformStyle: 'preserve-3d',
                         cursor: props.cursor,
                       }}
@@ -753,14 +709,14 @@ const Carousel = ({
                 </button>
               </div>
               <motion.div
-                className="mt-0 ml-60 overflow-hidden w-full max-w-[1500px] pb-4 flex justify-center mx-auto perspective-[800px]"
+                className="ml-60 mt-0 w-full max-w-[1500px] pb-4 flex justify-center mx-auto perspective-[800px]"
                 initial={{ y: 100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6 }}
               >
                 <motion.div
-                  className="flex gap-6 mt-3"
-                  initial={{ x: 100 }}
+                  className="flex gap-6 mt-3 justify-center"
+                  initial={{ x: 0 }}
                   animate={{
                     x: -centerIndex * 120,
                     transition: { type: 'spring', stiffness: 300, damping: 40 },
@@ -771,14 +727,9 @@ const Carousel = ({
                     return (
                       <motion.div
                         key={`grid-${idx}`}
-                        className={`group w-[80px] h-[120px] rounded-lg bg-white overflow-hidden relative shadow-md cursor-pointer flex-shrink-0 ${idx === centerIndex ? 'ring-2 ring-black ring-offset-2' : ''}`}
-                        whileHover={{ scale: 1.05 }}
+                        className={`w-[80px] h-[120px] rounded-lg bg-white overflow-hidden relative shadow-md cursor-pointer flex-shrink-0 ${idx === centerIndex ? 'ring-2 ring-black ring-offset-2' : ''}`}
                         onClick={() => {
-                          if (!isLoggedIn) {
-                            setShowLoginPopup(true);
-                          } else {
-                            setCenterIndex(idx);
-                          }
+                          setCenterIndex(idx);
                         }}
                         role="button"
                         tabIndex={0}
@@ -792,10 +743,6 @@ const Carousel = ({
                         />
                         <div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-10 text-black text-xs text-center py-0 select-text">
                           {card.name}
-                        </div>
-                        <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-end items-center pb-2">
-                          <div className="mt-1">
-                          </div>
                         </div>
                       </motion.div>
                     );
