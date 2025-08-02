@@ -9,7 +9,7 @@ import five from '../assets/landing-images/five.png';
 // Card image component
 const CardImage = ({ src, alt }) => (
   <img
-    src={src}
+    src={src} 
     alt={alt}
     className="w-full h-full object-cover rounded-[inherit]"
     draggable={false}
