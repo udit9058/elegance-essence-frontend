@@ -482,7 +482,7 @@ const Carousel = ({
           )}
           {/* Card Grid */}
           <motion.div
-            className="ml-60 mt-4 w-full max-w-md mx-auto perspective-[600px] overflow-x-auto"
+            className="ml-40 mt-4 w-full max-w-md mx-auto perspective-[600px]"
             initial={{ y: isMobile ? 50 : 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6 }}
