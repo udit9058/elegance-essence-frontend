@@ -139,7 +139,7 @@ function Navbar({ entranceDone }) {
           >
             {/* Navigation Links */}
             <div className="flex flex-col space-y-4 mt-4 w-full">
-              {['About Us', 'Contact Us', 'Shop'].map((link) => (
+              {['About Us', 'Contact Us', 'Shop' , 'Vitual Mall'].map((link) => (
                 <motion.div
                   key={link}
                   className={`text-base font-medium transition duration-300 cursor-pointer ${
@@ -222,7 +222,7 @@ function Navbar({ entranceDone }) {
       ) : (
         // Desktop View (Original)
         <div className="flex justify-end items-center space-x-3 sm:space-x-4">
-          {['About Us', 'Contact Us', 'Shop'].map((link) => (
+          {['About Us', 'Contact Us', 'Shop' , 'Virtual Mall'].map((link) => (
             <motion.div
               key={link}
               className={`text-sm sm:text-base font-medium transition duration-300 cursor-pointer ${

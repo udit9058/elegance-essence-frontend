@@ -16,12 +16,13 @@ import SellerDashboard from './seller/SellerDashboard';
 import BecomeSeller from './components/BecomeSeller';
 import SellerLogin from './pages/SellerLogin';
 import SellerRegister from './pages/SellerRegister';
+import VirtualMall from './VirtualMall/VirtualMall';
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <Routes>
+        <Routes>  
           <Route path="/" element={<LandingPage />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactUs />} />
@@ -37,6 +38,9 @@ function App() {
           <Route path="/become-seller" element={<BecomeSeller />} />
           <Route path="/seller/login" element={<SellerLogin />} />
           <Route path="/seller/register" element={<SellerRegister />} />
+
+
+          <Route path="/virtual-mall" element={<VirtualMall/>}></Route>
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
       </AuthProvider>
