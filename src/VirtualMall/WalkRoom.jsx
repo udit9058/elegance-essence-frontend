@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
+import { useNavigate } from "react-router-dom";
 import SHOPS from "./ShopData";
 
 const ROOM_SIZE = { width: 12, depth: 16, height: 5 };
@@ -10,8 +11,8 @@ const WalkRoom = () => {
   const move = useRef({ forward: false, backward: false, left: false, right: false });
   const yaw = useRef(0);
   const pitch = useRef(0);
-  const [mouseDown, setMouseDown] = useState(false);
-  const [lastMouse, setLastMouse] = useState({ x: 0, y: 0 });
+  const [cart, setCart] = useState([]); // State for cart items
+  const navigate = useNavigate(); // For navigation
 
   useEffect(() => {
     if (mountRef.current) {
@@ -36,7 +37,6 @@ const WalkRoom = () => {
       camera.position.set(0, 2, 6);
       cameraRef.current = camera;
     } else {
-      // Update aspect ratio if needed
       camera.aspect = mountRef.current.clientWidth / mountRef.current.clientHeight;
       camera.updateProjectionMatrix();
     }
@@ -55,15 +55,25 @@ const WalkRoom = () => {
     dirLight.position.set(10, 20, 10);
     scene.add(dirLight);
 
-    // Floor
+    // Floor with texture
+    const floorTexture = new THREE.TextureLoader().load(
+      "https://threejs.org/examples/textures/wood_floor.jpg"
+    );
+    floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+    floorTexture.repeat.set(2, 2);
     const floorGeometry = new THREE.PlaneGeometry(ROOM_SIZE.width, ROOM_SIZE.depth);
-    const floorMaterial = new THREE.MeshPhongMaterial({ color: 0xf7e9c6 });
+    const floorMaterial = new THREE.MeshPhongMaterial({ map: floorTexture });
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
 
-    // Walls
-    const wallMaterial = new THREE.MeshPhongMaterial({ color: 0xcce3f7, side: THREE.DoubleSide });
+    // Walls with texture
+    const wallTexture = new THREE.TextureLoader().load(
+      "https://threejs.org/examples/textures/brick_diffuse.jpg"
+    );
+    wallTexture.wrapS = wallTexture.wrapT = THREE.RepeatWrapping;
+    wallTexture.repeat.set(2, 1);
+    const wallMaterial = new THREE.MeshPhongMaterial({ map: wallTexture, side: THREE.DoubleSide });
     // Back wall
     const backWall = new THREE.Mesh(
       new THREE.PlaneGeometry(ROOM_SIZE.width, ROOM_SIZE.height),
@@ -87,7 +97,7 @@ const WalkRoom = () => {
     rightWall.position.set(ROOM_SIZE.width / 2, ROOM_SIZE.height / 2, 0);
     rightWall.rotation.y = -Math.PI / 2;
     scene.add(rightWall);
-    // Front wall
+    // Front wall with window
     const frontWall = new THREE.Mesh(
       new THREE.PlaneGeometry(ROOM_SIZE.width, ROOM_SIZE.height),
       wallMaterial
@@ -95,19 +105,33 @@ const WalkRoom = () => {
     frontWall.position.set(0, ROOM_SIZE.height / 2, ROOM_SIZE.depth / 2);
     frontWall.rotation.y = Math.PI;
     scene.add(frontWall);
-    // Ceiling
+    // Window
+    const windowGeo = new THREE.PlaneGeometry(3, 2);
+    const windowMat = new THREE.MeshPhongMaterial({ color: 0x87ceeb, transparent: true, opacity: 0.5 });
+    const windowMesh = new THREE.Mesh(windowGeo, windowMat);
+    windowMesh.position.set(0, ROOM_SIZE.height / 2, ROOM_SIZE.depth / 2 + 0.01);
+    scene.add(windowMesh);
+    // Ceiling with texture
+    const ceilingTexture = new THREE.TextureLoader().load(
+      "https://threejs.org/examples/textures/ceiling_tiles.jpg"
+    );
+    ceilingTexture.wrapS = ceilingTexture.wrapT = THREE.RepeatWrapping;
+    ceilingTexture.repeat.set(2, 2);
     const ceiling = new THREE.Mesh(
       new THREE.PlaneGeometry(ROOM_SIZE.width, ROOM_SIZE.depth),
-      new THREE.MeshPhongMaterial({ color: 0xfbeee6 })
+      new THREE.MeshPhongMaterial({ map: ceilingTexture })
     );
     ceiling.position.set(0, ROOM_SIZE.height, 0);
     ceiling.rotation.x = Math.PI / 2;
     scene.add(ceiling);
 
-    // Add clothes images to the back wall
+    // Add clothes images to the back wall with "Add to Cart" buttons
     const shop = SHOPS[0];
     const items = shop.demoItems;
     const spacing = ROOM_SIZE.width / (items.length + 1);
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    const itemMeshes = [];
     items.forEach((item, idx) => {
       // Image panel
       const imgTexture = new THREE.TextureLoader().load(item.image);
@@ -115,7 +139,9 @@ const WalkRoom = () => {
       const panelMat = new THREE.MeshPhongMaterial({ map: imgTexture });
       const panel = new THREE.Mesh(panelGeo, panelMat);
       panel.position.set(-ROOM_SIZE.width / 2 + spacing * (idx + 1), 2.5, -ROOM_SIZE.depth / 2 + 0.05);
+      panel.userData = { item }; // Store item data
       scene.add(panel);
+      itemMeshes.push(panel);
       // Label under image
       const canvas = document.createElement("canvas");
       canvas.width = 128;
@@ -132,6 +158,24 @@ const WalkRoom = () => {
       label.scale.set(1.2, 0.3, 1);
       label.position.set(panel.position.x, 1.2, panel.position.z + 0.01);
       scene.add(label);
+      // Add to Cart button (as sprite)
+      const buttonCanvas = document.createElement("canvas");
+      buttonCanvas.width = 128;
+      buttonCanvas.height = 32;
+      const btnCtx = buttonCanvas.getContext("2d");
+      btnCtx.fillStyle = "#28a745";
+      btnCtx.fillRect(0, 0, 128, 32);
+      btnCtx.fillStyle = "#fff";
+      btnCtx.font = "bold 14px Arial";
+      btnCtx.fillText("Add to Cart", 20, 22);
+      const buttonTexture = new THREE.CanvasTexture(buttonCanvas);
+      const buttonMat = new THREE.SpriteMaterial({ map: buttonTexture });
+      const button = new THREE.Sprite(buttonMat);
+      button.scale.set(1.2, 0.3, 1);
+      button.position.set(panel.position.x, 0.8, panel.position.z + 0.01);
+      button.userData = { item }; // Store item data
+      scene.add(button);
+      itemMeshes.push(button);
     });
 
     // Animation loop
@@ -159,7 +203,6 @@ const WalkRoom = () => {
       }
       if (moved) {
         direction.normalize();
-        // Move relative to camera yaw
         const moveYaw = yaw.current;
         const forward = new THREE.Vector3(-Math.sin(moveYaw), 0, -Math.cos(moveYaw));
         const right = new THREE.Vector3(-forward.z, 0, forward.x);
@@ -169,7 +212,6 @@ const WalkRoom = () => {
         moveVec.normalize();
         let nextX = camera.position.x + moveVec.x * speed;
         let nextZ = camera.position.z + moveVec.z * speed;
-        // Room boundary
         if (
           nextX > -ROOM_SIZE.width / 2 + 0.5 &&
           nextX < ROOM_SIZE.width / 2 - 0.5 &&
@@ -180,7 +222,7 @@ const WalkRoom = () => {
           camera.position.z = nextZ;
         }
       }
-      // Mouse look
+      // Update camera rotation
       camera.rotation.order = "YXZ";
       camera.rotation.y = yaw.current;
       camera.rotation.x = pitch.current;
@@ -193,12 +235,12 @@ const WalkRoom = () => {
     const handleKeyDown = (e) => {
       switch (e.code) {
         case "KeyW":
-        case "ArrowDown":
-          move.current.backward = true;
-          break;
-        case "KeyS":
         case "ArrowUp":
           move.current.forward = true;
+          break;
+        case "KeyS":
+        case "ArrowDown":
+          move.current.backward = true;
           break;
         case "KeyA":
         case "ArrowLeft":
@@ -208,6 +250,9 @@ const WalkRoom = () => {
         case "ArrowRight":
           move.current.right = true;
           break;
+        case "Escape":
+          navigate("/"); // Redirect to LandingPage
+          break;
         default:
           break;
       }
@@ -215,12 +260,12 @@ const WalkRoom = () => {
     const handleKeyUp = (e) => {
       switch (e.code) {
         case "KeyW":
-        case "ArrowDown":
-          move.current.backward = false;
-          break;
-        case "KeyS":
         case "ArrowUp":
           move.current.forward = false;
+          break;
+        case "KeyS":
+        case "ArrowDown":
+          move.current.backward = false;
           break;
         case "KeyA":
         case "ArrowLeft":
@@ -237,42 +282,53 @@ const WalkRoom = () => {
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
 
-    // Mouse look controls
-    const handleMouseDown = (e) => {
-      setMouseDown(true);
-      setLastMouse({ x: e.clientX, y: e.clientY });
-    };
-    const handleMouseUp = () => setMouseDown(false);
+    // Mouse move controls (no clicking)
     const handleMouseMove = (e) => {
-      if (!mouseDown) return;
-      const dx = e.clientX - lastMouse.x;
-      const dy = e.clientY - lastMouse.y;
-      yaw.current -= dx * 0.005;
-      pitch.current -= dy * 0.003;
+      const sensitivity = 0.00005;
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      const dx = e.clientX - centerX;
+      const dy = e.clientY - centerY;
+      yaw.current -= dx * sensitivity;
+      pitch.current -= dy * sensitivity * 0.6; // Reduced vertical sensitivity
       pitch.current = Math.max(-Math.PI / 2 + 0.1, Math.min(Math.PI / 2 - 0.1, pitch.current));
-      setLastMouse({ x: e.clientX, y: e.clientY });
+      // Reset mouse to center (optional, but enhances smooth control)
+      // Note: Pointer lock API could be better, but keeping simple for now
     };
+
+    // Click handler for Add to Cart
+    const handleClick = (e) => {
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(itemMeshes);
+      if (intersects.length > 0) {
+        const clicked = intersects[0].object;
+        if (clicked.userData.item && clicked.userData.item.name.includes("Add to Cart")) {
+          const item = clicked.userData.item;
+          setCart((prev) => [...prev, item]);
+          alert(`${item.name} added to cart!`);
+        }
+      }
+    };
+
     const dom = mountRef.current;
-    dom.addEventListener("mousedown", handleMouseDown);
-    dom.addEventListener("mouseup", handleMouseUp);
-    dom.addEventListener("mouseleave", handleMouseUp);
     dom.addEventListener("mousemove", handleMouseMove);
+    dom.addEventListener("click", handleClick);
 
     // Cleanup
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
-      dom.removeEventListener("mousedown", handleMouseDown);
-      dom.removeEventListener("mouseup", handleMouseUp);
-      dom.removeEventListener("mouseleave", handleMouseUp);
       dom.removeEventListener("mousemove", handleMouseMove);
+      dom.removeEventListener("click", handleClick);
       renderer.dispose();
       if (mountRef.current && renderer.domElement.parentNode === mountRef.current) {
         mountRef.current.removeChild(renderer.domElement);
       }
     };
-  }, [mouseDown, lastMouse]);
+  }, [navigate, cart]);
 
   return (
     <div
@@ -281,7 +337,10 @@ const WalkRoom = () => {
       tabIndex={0}
     >
       <div style={{ position: "absolute", top: 10, left: 10, color: "#333", background: "#fff8", padding: 8, borderRadius: 8, zIndex: 2 }}>
-        <b>Controls:</b> WASD or Arrow keys to move, Mouse drag to look around
+      <b>Controls:</b> WASD or Arrow keys to move, Mouse move to look around, Click item to add to cart, ESC to exit
+      <b>Cart ({cart.length}):</b> {cart.map((item, idx) => (
+        <span key={idx}>{item.name}{idx < cart.length - 1 ? ", " : ""}</span>
+      ))}
       </div>
     </div>
   );
